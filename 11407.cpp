@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int a[102], dp[102][10001];
+int a[102], dp[10002];
 
 void generate()
 {
@@ -14,7 +14,7 @@ int f(int i, int w)
 	if(a[i] > w) return 100;
 	if(i == 101) return 100;
 
-	if(dp[i][w] != -1) return dp[i][w];
+	if(dp[w] != -1) return dp[w];
 
 	int p, q;
 	p = q = INT_MAX;
@@ -22,7 +22,7 @@ int f(int i, int w)
 	if(w-a[i] >= 0) p = 1+f(i, w-a[i]);
 	q = f(i+1, w);
 
-	return dp[i][w] = min(p, q);
+	return dp[w] = min(p, q);
 }
 
 int main()
