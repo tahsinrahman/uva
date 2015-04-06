@@ -1,20 +1,21 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int n, a[1000];
-double b[1000], dp[102][102];
+int n, a[102];
+double b[102], dp[102];//, dp[102][102];
 
 double f(int i, int w)
 {
 	if(w <= 0) return 0;
 	if(i > n) return 100000;
 
-	if(dp[i][w]) return dp[i][w];
+//	if(dp[i][w]) return dp[i][w];
+	if(dp[w]) return dp[w];
 
 	double p = b[i] + f(i, w-a[i]);
 	double q = f(i+1, w);
 
-	return dp[i][w] = min(p, q);
+	return dp[w] = min(p, q);
 }
 
 int main()
