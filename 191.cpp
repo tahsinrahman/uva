@@ -1,62 +1,62 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-bool insideRectangle(pair <int, int> a, pair<int, int> b, pair<int, int> c)
+struct point {
+	int x, y;
+	point() {}
+	point(int i, int j) { x = i; y = j; }
+};
+
+int vectorCross(point a, point b)
 {
-	return (a.first <= c.first && c.first <= b.first && b.second <= c.second && c.second <= a.second);
+	return a.x*b.y-a.y*b.x;
 }
 
-bool onSegment(pair <int ,int> a, pair<int ,int> b, pair<int, int> c)
+int direction(point a, point b, point c)
 {
-	return min(a.first, b.first) <= c.first && c.first <= max(a.first, b.first) && min(a.second, b.second) <= c.second && c.second <= max(a.second, b.second); 
+	return vectorCross(point (c.x-a.x, c.y-a.y), point (b.x-a.x, b.y-a.y));
 }
 
-int direction(pair <int, int> a, pair<int, int> b, pair <int, int> c)
+bool onSegment(point a, point b, point c)
 {
-	return (b.first-a.first)*(c.second-a.second)-(c.first-a.first)*(b.second-a.second);
+	return min(a.x, b.x) <= c.x && c.x <= max(a.x, b.x) && min(a.y, b.y) <= c.y && c.y <= max(a.y, b.y);
 }
 
-bool segmentIntersect(pair <int, int> a, pair<int, int> b, pair<int, int> c, pair <int, int> d)
+bool segmentIntersect(point a, point b, point c, point d)
 {
 	int d1 = direction(c, d, a);
 	int d2 = direction(c, d, b);
 	int d3 = direction(a, b, c);
 	int d4 = direction(a, b, d);
 
-	if(((d1>0 && d2<0) || (d1<0 && d2>0)) && ((d3>0 && d4<0) || (d3<0 && d4>0))) return true;
-	if(d1 == 0 && onSegment(c, d, a)) return true;
-	if(d2 == 0 && onSegment(c, d, b)) return true;
-	if(d3 == 0 && onSegment(a, b, c)) return true;
-	if(d4 == 0 && onSegment(a, b, d)) return true;
-	return false;
+	if(((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0)) && (d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0)) return 1;
+	if(d1 == 0 && onSegment(c, d, a)) return 1;
+	if(d2 == 0 && onSegment(c, d, b)) return 1;
+	if(d3 == 0 && onSegment(a, b, c)) return 1;
+	if(d4 == 0 && onSegment(a, b, d)) return 1;
+
+	return 0;
 }
+
 
 int main()
 {
 	int t;
-	pair <int, int> a, b, c, d, p, q;
 
 	scanf("%d", &t);
 
+	point a, b, p, q;
+
 	while(t--) {
-		scanf("%d%d%d%d%d%d%d%d", &p.first, &p.second, &q.first, &q.second, &a.first, &a.second, &b.first, &b.second);
+		scanf("%d%d%d%d%d%d%d%d", &p.x, &p.y, &q.x, &q.y, &a.x, &a.y, &b.x, &b.y);
 
-		pair <int, int> x, y;
-		x.first = min(a.first, b.first);
-		x.second = max(a.second, b.second);
-		y.first = max(a.first, b.first);
-		y.second = min(a.second, b.second);
+		if(a.x > b.x) swap(a.x, b.x);
+		if(a.y < b.y) swap(a.y, b.y);
 
-		a = x;
-		b = y;
+		point c(a.x, b.y);
+		point d(b.x, a.y);
 
-		c = make_pair(b.first, a.second);
-		d = make_pair(a.first, b.second);
-
-//		cout << a.first << ' ' << c.first << ' ' << b.first << ' ' << b.second << ' ' << c.second << ' ' << a.second << endl;
-//		cout << insideRectangle(a, b, p) << endl;
-
-		if(segmentIntersect(p, q, a, c) || segmentIntersect(p, q, a, d) || segmentIntersect(p, q, b, d) || segmentIntersect(p, q, b, c) || insideRectangle(a, b, p) || insideRectangle(a, b, q)) printf("T\n");
+		if(segmentIntersect(p, q, a, c) || segmentIntersect(p, q, a, d) || segmentIntersect(p, q, b, c) || segmentIntersect(p, q, b, d) || onSegment(a, b, p) || onSegment(a, b, q)) printf("T\n");
 		else printf("F\n");
 	}
 
