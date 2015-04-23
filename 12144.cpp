@@ -41,8 +41,8 @@ int dijkstra(int source, int destination)
 
 		if(u.city == destination) return ucost;
 
-		if(vis[u.city]) continue;
-		vis[u.city] = 1;
+//		if(vis[u.city]) continue;
+//		vis[u.city] = 1;
 
 		for(int i = 0; i < n; i++) {
 			if(!graph[u.city][i]) continue;
