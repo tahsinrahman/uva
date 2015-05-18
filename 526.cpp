@@ -5,51 +5,36 @@ int cnt, cs;
 int dp[82][82];
 char a[82], b[82];
 
-void f(int i, int j) {
-	if(!i && !j) return;
-
-	if(!i) {
-		for(int i = 1; i <= j; ++i) {
-			printf("%d Insert %d,%c\n", ++cs, i, b[i-1]);
-			++cnt;
+void printSolution(int n, int m) {
+	int cs = 0, i = 0, j = 0, cnt = 0;
+	while(i < n && j < m) {
+		if(a[i] == b[j]) { ++i; ++j; }
+		else if(dp[i][j] == 1+dp[i+1][j+1]) {
+			printf("%d Replace %d,%c\n", ++cs, i+1+cnt, b[j]);
+			++i;
+			++j;
 		}
-		return;
-	}
-
-	if(!j) {
-		for(int j = 1; j <= i; ++j) {
-			printf("%d Delete %d\n", ++cs, i+cnt);
+		else if(dp[i][j] == 1+dp[i+1][j]) {
+			printf("%d Delete %d, %c\n", ++cs, i+1+cnt, a[i]);
 			--cnt;
+			++i;
 		}
-		return;
+		else if(dp[i][j] == 1+dp[i][j+1]) {
+			printf("%d Insert %d,%c\n", ++cs, j+1, b[j]);
+			++cnt;
+			++j;
+		}
 	}
-
-
-	if(dp[i][j] == dp[i-1][j-1] && a[i-1] == b[j-1]) {
-		f(i-1, j-1);
-		return;
-	}
-
-	if(dp[i][j] == 1+dp[i-1][j-1]) {
-		f(i-1, j-1);
-		printf("%d Replace %d,%c\n", ++cs, i+cnt, b[j-1]);
-		return;
-	}
-
-	if(dp[i][j] == 1+dp[i-1][j]) {
-		f(i-1, j);
-		printf("%d Delete %d\n", ++cs, i+cnt);
+	while(i < n) {
+		printf("%d Delete %d, %c\n", ++cs, i+1+cnt, a[i]);
 		--cnt;
-		return;
+		++i;
 	}
-	if(dp[i][j] == 1+dp[i][j-1]) {
-		f(i, j-1);
-		++cnt;
-		printf("%d Insert %d,%c\n", ++cs, i+cnt, b[j-1]);
-		return;
+	while(j < m) {
+		printf("%d Insert %d,%c\n", ++cs, j+1, b[j]);
+		++j;
 	}
 }
-
 
 int main() {
 	int flag = 0;
@@ -62,17 +47,16 @@ int main() {
 		int n = strlen(a);
 		int m = strlen(b);
 
-		dp[0][0] = 0;
-		for(int i = 1; i <= n; ++i) dp[i][0] = i;
-		for(int i = 1; i <= m; ++i) dp[0][i] = i;
+		dp[n][m] = 0;
+		for(int i = 0; i <= n; ++i) dp[i][m] = n-i;
+		for(int i = 0; i <= m; ++i) dp[n][i] = m-i;
 
-		for(int i = 1; i <= n; ++i) for(int j = 1; j <= m; ++j) dp[i][j] = min(min(dp[i-1][j], dp[i][j-1])+1, dp[i-1][j-1] + (a[i-1]!=b[j-1]));
+		for(int i = n-1; i >= 0; --i) for(int j = m-1; j >= 0; --j) dp[i][j] = min(min(dp[i+1][j], dp[i][j+1])+1, dp[i+1][j+1] + (a[i]!=b[j]));
 
-		printf("%d\n", dp[n][m]);
-		cs = 0;
+		printf("%d\n", dp[0][0]);
 
-		cnt = 0;
-		f(n, m);
+		printSolution(n, m);
+
 	}
 
 	return 0;
